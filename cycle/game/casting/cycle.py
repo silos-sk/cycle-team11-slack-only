@@ -5,9 +5,8 @@ from game.shared.color import Color
 
 
 class Cycle(Actor):
-    """A fast motorcycle.
 
-    The responsibility of Cycle is to move itself.
+    """ The responsibility of Cycle is to move itself.
 
     Attributes:
     ---
