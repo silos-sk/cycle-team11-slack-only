@@ -3,6 +3,7 @@ import constants
 from game.scripting.action import Action
 from game.shared.point import Point
 from game.casting.game_over_action import GameOver
+from game.scripting.reset_game_action import ResetGameAction
 
 
 class HandleCollisionsAction(Action):
@@ -17,10 +18,16 @@ class HandleCollisionsAction(Action):
         _is_game_over (boolean): Whether or not the game is over.
     """
 
-    def __init__(self):
-        """Constructs a new HandleCollisionsAction."""
+    def __init__(self, keyboard_service):
+        """Constructs a new HandleCollisionsAction.
+        
+        Args:
+        ---
+            keyboard_service (KeyboardService): An instance of KeyboardService.
+            """
         self._is_game_over = False
         self._game_over_action = ""
+        self._keyboard_service = keyboard_service
 
     def execute(self, cast, script):
         """Executes the handle collisions action.
@@ -33,7 +40,7 @@ class HandleCollisionsAction(Action):
         if not self._is_game_over:
             self._handle_segment_collision(cast)
         self._handle_wall(cast)
-        self._handle_game_over(cast)
+        self._handle_game_over(cast, script)
 
     def _handle_wall(self, cast):
         """"Handles how the cycles interact with the walls
@@ -67,6 +74,8 @@ class HandleCollisionsAction(Action):
         
         segments_one = cycle_one.get_segments()[1:]
         segments_two = cycle_two.get_segments()[1:]
+
+        
         
         # which user wins and displays their name
 
@@ -127,7 +136,7 @@ class HandleCollisionsAction(Action):
         """
 
 
-    def _handle_game_over(self, cast):
+    def _handle_game_over(self, cast, script):
         """Shows the 'game over' message and turns both cycles white if the game is over.
 
         Args:
@@ -139,6 +148,7 @@ class HandleCollisionsAction(Action):
         x = int(constants.MAX_X / 2)
         y = int(constants.MAX_Y / 2)
         position = Point(x, y)
+
 
         if self._is_game_over:
             cycle_one = cast.get_first_actor("cycle_one")
@@ -161,3 +171,14 @@ class HandleCollisionsAction(Action):
 
             for segment in segments_two:
                 segment.set_color(constants.WHITE)
+
+            if self._keyboard_service.is_key_down(' '):
+                reset = ResetGameAction()
+                reset.execute(cast, script)
+                self._is_game_over = False
+                self._game_over_action = ""
+                cast.remove_actor("messages", game_over)
+                
+                
+
+            
