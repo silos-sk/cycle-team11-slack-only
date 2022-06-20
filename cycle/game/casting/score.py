@@ -25,7 +25,7 @@ class Score(Actor):
 
         """
         super().__init__()
-        self._points = 1
+        self._points = 0
         position = Point(0, 0)
         self._player_name = ""
         self.set_text(f"{self._player_name}: {self._points}")
