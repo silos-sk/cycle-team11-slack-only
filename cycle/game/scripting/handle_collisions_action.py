@@ -3,7 +3,6 @@ import constants
 from game.scripting.action import Action
 from game.shared.point import Point
 from game.casting.game_over_action import GameOver
-from game.scripting.reset_game_action import ResetGameAction
 
 
 class HandleCollisionsAction(Action):
@@ -18,16 +17,10 @@ class HandleCollisionsAction(Action):
         _is_game_over (boolean): Whether or not the game is over.
     """
 
-    def __init__(self, keyboard_service):
-        """Constructs a new HandleCollisionsAction.
-        
-        Args:
-        ---
-            keyboard_service (KeyboardService): An instance of KeyboardService.
-            """
+    def __init__(self):
+        """Constructs a new HandleCollisionsAction."""
         self._is_game_over = False
         self._game_over_action = ""
-        self._keyboard_service = keyboard_service
 
     def execute(self, cast, script):
         """Executes the handle collisions action.
@@ -40,7 +33,7 @@ class HandleCollisionsAction(Action):
         if not self._is_game_over:
             self._handle_segment_collision(cast)
         self._handle_wall(cast)
-        self._handle_game_over(cast, script)
+        self._handle_game_over(cast)
 
     def _handle_wall(self, cast):
         """"Handles how the cycles interact with the walls
@@ -74,69 +67,58 @@ class HandleCollisionsAction(Action):
         
         segments_one = cycle_one.get_segments()[1:]
         segments_two = cycle_two.get_segments()[1:]
-
-        
         
         # which user wins and displays their name
 
         # If cycle_two hits cycle_one's then displays cycle_one wins
         for segment_one in segments_one:
             if cycle_two_head.get_position().equals(segment_one.get_position()):
-                score1.add_points(1)
-                self._game_over_action = f"{cycle_one.get_name()} wins!\nPress spacebar to reset!"
-                self._is_game_over = True
+                score2.reduce_points()
+                if score2.get_points() < 1:
+                    self._game_over_action = f"{cycle_one.get_name()} wins!"
+                    self._is_game_over = True
             
             # If cycle_one hits its own body then displays cycle_two wins
             if cycle_one_head.get_position().equals(segment_one.get_position()):
-                #first check to see if they both hit themselves
-                for segment_two in segments_two:
-                    if cycle_two_head.get_position().equals(segment_two.get_position()):
-                        self._game_over_action = f"Game Over!\nPress spacebar to reset!"
-                        self._is_game_over = True
-                        #something I did glitches and gives cycle_two a point anyway, this corrects that
-                        score2.reduce_points()
-                    #otherwise proceed with cycle_two wins
-                    else:
-                        if self._is_game_over == False:
-                            score2.add_points(1)
-                            self._game_over_action = f"{cycle_two.get_name()} wins!\nPress spacebar to reset!"
-                            self._is_game_over = True
+                score1.reduce_points()
+                if score1.get_points() < 1:
+                    self._game_over_action = f"{cycle_two.get_name()} wins!"
+                    self._is_game_over = True
 
         # If cycle one hits cycle_two's body then displays cycle_two wins
         for segment_two in segments_two:
             if cycle_one_head.get_position().equals(segment_two.get_position()):
-                score2.add_points(1)
-                self._game_over_action = f"{cycle_two.get_name()} wins!\nPress spacebar to reset!"
-                self._is_game_over = True
-
-            # If cycle_two hits its own body then displays cycle_one wins
-            if self._is_game_over == False:
-                if cycle_two_head.get_position().equals(segment_two.get_position()):
-                    score1.add_points(1)
-                    self._game_over_action = f"{cycle_one.get_name()} wins!\nPress spacebar to reset!"
+                score1.reduce_points()
+                if score1.get_points() < 1:
+                    self._game_over_action = f"{cycle_two.get_name()} wins!"
                     self._is_game_over = True
 
-        # If cycle_one hits cycle_two display cycle_two wins
+            # If cycle_two hits its own body then displays cycle_one wins
+            if cycle_two_head.get_position().equals(segment_two.get_position()):
+                score2.reduce_points()
+                if score2.get_points() < 1:
+                    self._game_over_action = f"{cycle_one.get_name()} wins!"
+                    self._is_game_over = True
+
+        # If cycle_one hits cycle_two display cycle_one wins
         if cycle_one_head.get_position().equals(cycle_two_head.get_position()):
-            score2.add_points(1)
-            self._game_over_action = f"{cycle_two.get_name()} wins!\nPress spacebar to reset!"
-            self._is_game_over = True
+            score1.reduce_points()
+            if score1.get_points() < 1:
+                self._game_over_action = f"{cycle_two.get_name()} wins!"
+                self._is_game_over = True
 
         # If cycle_two hits cycle_one display cycle_one wins
         if cycle_two_head.get_position().equals(cycle_one_head.get_position()):
-            score1.add_points(1)
-            self._game_over_action = f"{cycle_one.get_name()} wins!\nPress spacebar to reset!"
-            self._is_game_over = True
+            score2.reduce_points()
+            if score2.get_points() < 1:
+                self._game_over_action = f"{cycle_one.get_name()} wins!"
+                self._is_game_over = True
 
-        """
-        #Don't know what to replace this with
         if score1.get_points() == 0 and score2.get_points() == 0:
             self._game_over_action = f"Game Over!"
             self._is_game_over = True
-        """
 
-
-    def _handle_game_over(self, cast, script):
+    def _handle_game_over(self, cast):
         """Shows the 'game over' message and turns both cycles white if the game is over.
 
         Args:
@@ -148,7 +130,6 @@ class HandleCollisionsAction(Action):
         x = int(constants.MAX_X / 2)
         y = int(constants.MAX_Y / 2)
         position = Point(x, y)
-
 
         if self._is_game_over:
             cycle_one = cast.get_first_actor("cycle_one")
@@ -171,14 +152,3 @@ class HandleCollisionsAction(Action):
 
             for segment in segments_two:
                 segment.set_color(constants.WHITE)
-
-            if self._keyboard_service.is_key_down(' '):
-                reset = ResetGameAction()
-                reset.execute(cast, script)
-                self._is_game_over = False
-                self._game_over_action = ""
-                cast.remove_actor("messages", game_over)
-                
-                
-
-            
