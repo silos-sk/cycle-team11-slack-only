@@ -55,8 +55,10 @@ root                              (project root folder)
 * Python 3.8.0
 
 ## Authors
-* Bright Yasefi
 * Daniel Muzo
-* Ricardo Rivas
 * Shaira Silos
 * George Blanchard
+
+# Extra Credit
+
+We added a method with the spacebar that allows us to reset the game(starting in different directions, even!) while maintaining the score, allowing players to track their wins and losses competitively across several iterations.

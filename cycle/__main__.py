@@ -15,7 +15,7 @@ from game.shared.color import Color
 from game.shared.point import Point
 
 def main():
-
+             
     # Creates two cycles, with color and positions
     cycle_one = Cycle(Point(int(constants.MAX_X - 600), int(constants.MAX_Y / 2)))
     cycle_two = Cycle(Point(int(constants.MAX_X - 300), int(constants.MAX_Y / 2)))
@@ -32,8 +32,8 @@ def main():
     score2 = Score()
     score1.set_position(Point(constants.MAX_X - 850, 0))
     score2.set_position(Point(constants.MAX_X - 200, 0))
-    score1.add_points(3)
-    score2.add_points(3)
+    score1.add_points(-1)
+    score2.add_points(-1)
     score1.set_player_name(cycle_one_name)
     score2.set_player_name(cycle_two_name)
     cast.add_actor("cycle_one", cycle_one)
@@ -47,7 +47,7 @@ def main():
 
     script = Script()
     script.add_action("input", ControlActorsAction(keyboard_service))
-    script.add_action("update", HandleCollisionsAction())
+    script.add_action("update", HandleCollisionsAction(keyboard_service))
     script.add_action("update", MoveActorsAction())
     script.add_action("output", DrawActorsAction(video_service))
 
