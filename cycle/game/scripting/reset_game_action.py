@@ -3,7 +3,6 @@ import constants
 from game.scripting.action import Action
 from game.casting.cycle import Cycle
 from game.shared.point import Point
-from game.casting.game_over_action import GameOver
 
 
 class ResetGameAction(Action):
@@ -20,6 +19,7 @@ class ResetGameAction(Action):
             cast (Cast): The cast of Actors in the game.
             script (Script): The script of Actions in the game.
         """
+        #delete the original cycles and game over message
         cycle_one = cast.get_first_actor("cycle_one")
         cycle_two = cast.get_first_actor("cycle_two")
         cast.remove_actor("cycle_one", cycle_one)
@@ -29,12 +29,12 @@ class ResetGameAction(Action):
         for i in game_over:
             cast.remove_actor("messages", i)
         
-
-
+        #recreate the cycles in their original positions
         cycle_one = Cycle(Point(int(constants.MAX_X - 600), int(constants.MAX_Y / 2)))
         cycle_two = Cycle(Point(int(constants.MAX_X - 300), int(constants.MAX_Y / 2)))
         cycle_one.set_cycle_color(constants.RED)
         cycle_two.set_cycle_color(constants.GREEN)
+        
         cycle_one_name = "Player one"
         cycle_two_name = "Player two"
         cycle_one.set_name(cycle_one_name)
@@ -42,20 +42,3 @@ class ResetGameAction(Action):
 
         cast.add_actor("cycle_one", cycle_one)
         cast.add_actor("cycle_two", cycle_two)
-
-
-        cycle_one.turn_cycle(Point(0, -constants.CELL_SIZE))
-        cycle_two.turn_cycle(Point(0, -constants.CELL_SIZE))
-"""
-        segments_one = cycle_one.get_segments()
-        segments_one[1].set_velocity(Point(0, -constants.CELL_SIZE))
-        segments_one = cycle_one.get_segments()
-        segments_one[1].set_velocity(Point(0, -constants.CELL_SIZE))
-        
-
-
-        for i in range(len(self._segments) - 1, 0, -1):
-            trailing = self._segments[i]
-            previous = self._segments[i - 1]
-            velocity = previous.get_velocity()
-            trailing.set_velocity(velocity)"""

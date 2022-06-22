@@ -75,8 +75,6 @@ class HandleCollisionsAction(Action):
         segments_one = cycle_one.get_segments()[1:]
         segments_two = cycle_two.get_segments()[1:]
 
-        
-        
         # which user wins and displays their name
 
         # If cycle_two hits cycle_one's then displays cycle_one wins
@@ -129,13 +127,6 @@ class HandleCollisionsAction(Action):
             self._game_over_action = f"{cycle_one.get_name()} wins!\nPress spacebar to reset!"
             self._is_game_over = True
 
-        """
-        #Don't know what to replace this with
-        if score1.get_points() == 0 and score2.get_points() == 0:
-            self._game_over_action = f"Game Over!"
-            self._is_game_over = True
-        """
-
 
     def _handle_game_over(self, cast, script):
         """Shows the 'game over' message and turns both cycles white if the game is over.
@@ -177,8 +168,3 @@ class HandleCollisionsAction(Action):
                 reset = ResetGameAction()
                 reset.execute(cast, script)
                 self._is_game_over = False
-                
-                
-                
-
-            
