@@ -26,13 +26,14 @@ class KeyboardService:
         self._keys['l'] = pyray.KEY_L
 
         self._keys[' '] = pyray.KEY_SPACE
+        self._keys['g'] = pyray.KEY_G
 
     def is_key_up(self, key):
         """Checks if the given key is currently up.
 
         Args:
         ---
-            key (string): The given key (w, a, s, d or i, j, k, l)
+            key (string): The given key (w, a, s, d or i, j, k, , g)
         """
         pyray_key = self._keys[key.lower()]
         return pyray.is_key_up(pyray_key)
@@ -42,7 +43,7 @@ class KeyboardService:
 
         Args:
         ---
-            key (string): The given key (w, a, s, d or i, j, k, l)
+            key (string): The given key (w, a, s, d or i, j, k, l, , g)
         """
         pyray_key = self._keys[key.lower()]
         return pyray.is_key_down(pyray_key)

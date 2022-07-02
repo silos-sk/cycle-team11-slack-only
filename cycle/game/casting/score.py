@@ -54,7 +54,10 @@ class Score(Actor):
 
     def reduce_points(self):
         """Reduces points for the user"""
-        self._points -= 1
+        if self._points >= 1:
+            self._points -= 1
+        else:
+            self._points = 0
         self.set_text(f"{self._player_name}: {self._points}")
 
     def set_player_name(self,name):

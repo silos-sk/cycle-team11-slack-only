@@ -75,13 +75,15 @@ class HandleCollisionsAction(Action):
         segments_one = cycle_one.get_segments()[1:]
         segments_two = cycle_two.get_segments()[1:]
 
+        message_reset = "Spacebar to restart,\n g to reset points!"
+
         # which user wins and displays their name
 
         # If cycle_two hits cycle_one's then displays cycle_one wins
         for segment_one in segments_one:
             if cycle_two_head.get_position().equals(segment_one.get_position()):
                 score1.add_points(1)
-                self._game_over_action = f"{cycle_one.get_name()} wins!\nPress spacebar to reset!"
+                self._game_over_action = f"{cycle_one.get_name()} wins!\n{message_reset}"
                 self._is_game_over = True
             
             # If cycle_one hits its own body then displays cycle_two wins
@@ -89,7 +91,7 @@ class HandleCollisionsAction(Action):
                 #first check to see if they both hit themselves
                 for segment_two in segments_two:
                     if cycle_two_head.get_position().equals(segment_two.get_position()):
-                        self._game_over_action = f"Game Over!\nPress spacebar to reset!"
+                        self._game_over_action = f"Game Over!\n{message_reset}"
                         self._is_game_over = True
                         #something I did glitches and gives cycle_two a point anyway, this corrects that
                         score2.reduce_points()
@@ -98,33 +100,33 @@ class HandleCollisionsAction(Action):
                     else:
                         if self._is_game_over == False:
                             score2.add_points(1)
-                            self._game_over_action = f"{cycle_two.get_name()} wins!\nPress spacebar to reset!"
+                            self._game_over_action = f"{cycle_two.get_name()} wins!\n{message_reset}"
                             self._is_game_over = True
 
         # If cycle one hits cycle_two's body then displays cycle_two wins
         for segment_two in segments_two:
             if cycle_one_head.get_position().equals(segment_two.get_position()):
                 score2.add_points(1)
-                self._game_over_action = f"{cycle_two.get_name()} wins!\nPress spacebar to reset!"
+                self._game_over_action = f"{cycle_two.get_name()} wins!\n{message_reset}"
                 self._is_game_over = True
 
             # If cycle_two hits its own body then displays cycle_one wins
             if self._is_game_over == False:
                 if cycle_two_head.get_position().equals(segment_two.get_position()):
                     score1.add_points(1)
-                    self._game_over_action = f"{cycle_one.get_name()} wins!\nPress spacebar to reset!"
+                    self._game_over_action = f"{cycle_one.get_name()} wins!\n{message_reset}"
                     self._is_game_over = True
 
         # If cycle_one hits cycle_two display cycle_two wins
         if cycle_one_head.get_position().equals(cycle_two_head.get_position()):
             score2.add_points(1)
-            self._game_over_action = f"{cycle_two.get_name()} wins!\nPress spacebar to reset!"
+            self._game_over_action = f"{cycle_two.get_name()} wins!\n{message_reset}"
             self._is_game_over = True
 
         # If cycle_two hits cycle_one display cycle_one wins
         if cycle_two_head.get_position().equals(cycle_one_head.get_position()):
             score1.add_points(1)
-            self._game_over_action = f"{cycle_one.get_name()} wins!\nPress spacebar to reset!"
+            self._game_over_action = f"{cycle_one.get_name()} wins!\n{message_reset}"
             self._is_game_over = True
 
 
@@ -168,3 +170,11 @@ class HandleCollisionsAction(Action):
                 reset = ResetGameAction()
                 reset.execute(cast, script)
                 self._is_game_over = False
+
+            if self._keyboard_service.is_key_down('g'):
+                score1 = cast.get_first_actor("score1")
+                score2 = cast.get_first_actor("score2")
+                score1.reduce_points()
+                score2.reduce_points()
+                reset = ResetGameAction()
+                
